@@ -2,16 +2,14 @@ package locationservice
 
 import java.net.URLEncoder
 
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
-import LocationServiceProtocol.{ sprayJsonMarshaller, sprayJsonUnmarshaller }
-import akka.actor.{ Actor, ActorLogging }
-import spray.client.pipelining.{ Get, WithTransformerConcatenation, sendReceive, sendReceive$default$3, unmarshal }
+import LocationServiceProtocol.{sprayJsonMarshaller, sprayJsonUnmarshaller}
+import akka.actor.{Actor, ActorLogging}
+import spray.client.pipelining.{Get, WithTransformerConcatenation, sendReceive, sendReceive$default$3, unmarshal}
 import spray.httpx.SprayJsonSupport
-import spray.json.DefaultJsonProtocol
-import spray.json._
+import spray.json.{DefaultJsonProtocol, JsonFormat}
 import spray.routing.RequestContext
-import spray.httpx.marshalling.Marshaller
 
 case class Address(address: String) {
   require(!address.isEmpty(), "The given address cannot be empty.")

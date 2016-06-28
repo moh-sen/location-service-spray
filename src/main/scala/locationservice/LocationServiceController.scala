@@ -1,6 +1,7 @@
 package locationservice
 
-import akka.actor.{ Actor, Props }
+import akka.actor.{Actor, Props, actorRef2Scala}
+import locationservice.LocationServiceProtocol.sprayJsonUnmarshaller
 import spray.routing.Directive.pimpApply
 import spray.routing.HttpService
 

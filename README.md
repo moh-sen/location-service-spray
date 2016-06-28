@@ -4,6 +4,8 @@ Location Service with Spray
 Description:
 Simple REST location service using Spray and Google Maps API.
 
+The service accepts only Post requests with Json payload as follows:
+
 Request:
 {
   "address": "leidseplein 25, amsterdam"
@@ -17,7 +19,7 @@ Response:
   }
 }
 
-How to run:
+How to run the server:
 
 - `sbt run` => Starts the server at localhost:9090
 

@@ -1,9 +1,14 @@
 package locationservice
 
+import scala.concurrent.duration.DurationInt
+
 import com.typesafe.config.ConfigFactory
-import akka.actor.{ Actor, ActorLogging, ActorSystem, Props, actorRef2Scala }
+
+import akka.actor.{ActorSystem, Props}
 import akka.io.IO
-import akka.io.Tcp._
+import akka.io.Tcp.{Bound, CommandFailed}
+import akka.pattern.ask
+import akka.util.Timeout
 import spray.can.Http
 
 object LocationServiceLauncher extends App {

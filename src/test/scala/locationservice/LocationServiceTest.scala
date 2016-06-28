@@ -1,10 +1,12 @@
 package locationservice
 
-import org.scalatest.{ FunSuite, Matchers }
+import scala.concurrent.duration.DurationInt
+
+import org.scalatest.{FunSuite, Matchers}
 
 import akka.actor.ActorRefFactory
-import spray.http.{ ContentTypes, HttpEntity, HttpRequest }
-import spray.http.StatusCodes.{ MethodNotAllowed, OK }
+import spray.http.{ContentTypes, HttpEntity, HttpRequest}
+import spray.http.StatusCodes.{MethodNotAllowed, OK}
 import spray.json.pimpString
 import spray.testkit.ScalatestRouteTest
 
@@ -15,37 +17,37 @@ class LocationServiceTest extends FunSuite with ScalatestRouteTest with Location
   
   import akka.util.Timeout
   import scala.concurrent.duration._
-  implicit val timeout = Timeout(10 seconds)
+  implicit val routeTestTimeout = RouteTestTimeout(5.second)
 
   test("Location service should respond with correct location for a valid address") {
     makePostReques(Address) ~> locationServiceRoute ~> check {
-      status should equal(OK)
-      entity.toString should include(Location)
+      status shouldBe OK
+      entity.data.asString shouldBe Location
     }
   }
 
   test("Location service should respond with correct error response for an invalid address") {
     makePostReques(InvalidAddress) ~> locationServiceRoute ~> check {
-      status should equal(OK)
-      entity.toString should include(ErrorEmptyResult)
+      status shouldBe OK
+      entity.data.asString shouldBe ErrorEmptyResult
     }
   }
   
   test("Location service should respond with correct error response for an empty address") {
     makePostReques(EmptyAddress) ~> locationServiceRoute ~> check {
       rejections.head.toString should include("The given address cannot be empty")
-      handled should equal(false)
+      handled shouldBe false
     }
   }
   
   test("Location service only responds to Post requests") {
-    tryUnsupportedMethod(Put())
     tryUnsupportedMethod(Get())
+    tryUnsupportedMethod(Put())
     tryUnsupportedMethod(Delete())
     
     def tryUnsupportedMethod(request: HttpRequest) = request ~> sealRoute(locationServiceRoute) ~> check {
-      status should equal(MethodNotAllowed)
-      responseAs[String] should equal("HTTP method not allowed, supported methods: POST")
+      status shouldBe MethodNotAllowed
+      responseAs[String] shouldBe "HTTP method not allowed, supported methods: POST"
     }
   }
   
@@ -55,8 +57,8 @@ class LocationServiceTest extends FunSuite with ScalatestRouteTest with Location
 private object Contents {
   import spray.json._
 
-  val Address = """{ "address" : "Eendrachtlaan 315,Utrecht" }""".parseJson.prettyPrint
-  val Location = """{ "location": { "lat": 52.0618174, "lng": 5.1085974 } }""".parseJson.prettyPrint
+  val Address = """{ "address" : "leidseplein 25, amsterdam" }""".parseJson.prettyPrint
+  val Location = """{ "location": { "lat": 52.3635367, "lng": 4.882453 } }""".parseJson.prettyPrint
   
   val InvalidAddress = """{ "address" : "kjsd" }""".parseJson.prettyPrint
   val ErrorEmptyResult = """{ "error": { "message" : "No location could be bound to the given address!" } }""".parseJson.prettyPrint
